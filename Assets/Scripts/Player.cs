@@ -8,11 +8,12 @@ public class Player : MonoBehaviour {
     // player's current horizontal and vertical input
     [SerializeField] private float movementMultiplier = 0.1f;
     // multiplier to prevent player from flying off the screen
+    [SerializeField] private Rigidbody2D rb;
     private float moveLimiter = 1.414f;
     // sqrt2 to counteract diagonal movement (pythagorean)
 
     private void Start() {
-
+        rb = GetComponent<Rigidbody2D>();
     }
 
     private void Update() {
@@ -33,5 +34,7 @@ public class Player : MonoBehaviour {
             transform.position.y + vertical * movementMultiplier
         );
         // update the player's position
+        rb.velocity = new Vector2(0,0);
+        // makes sure that their velocity is 0, otherwise the player will drift around after being pushed
     }
 }
