@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
+    [SerializeField] private int health = 100;
     [SerializeField] private float horizontal;
     [SerializeField] private float vertical;
     // player's current horizontal and vertical input
