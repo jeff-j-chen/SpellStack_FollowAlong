@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Player : MonoBehaviour {
     [SerializeField] private int health = 100;
@@ -10,6 +11,7 @@ public class Player : MonoBehaviour {
     [SerializeField] private float movementMultiplier = 0.1f;
     // multiplier to prevent player from flying off the screen
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private TextMeshProUGUI healthText;
     private float moveLimiter = 1.414f;
     // sqrt2 to counteract diagonal movement (pythagorean)
 
@@ -37,5 +39,13 @@ public class Player : MonoBehaviour {
         // update the player's position
         rb.velocity = new Vector2(0,0);
         // makes sure that their velocity is 0, otherwise the player will drift around after being pushed
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) {
+        if (collision.gameObject.name.Contains("enemy")) {
+            health -= 10;
+            healthText.text = $"Player HP: {health}";
+            print("took collision damage!");
+        }
     }
 }
