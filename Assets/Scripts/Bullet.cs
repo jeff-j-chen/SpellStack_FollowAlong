@@ -17,7 +17,6 @@ public class Bullet : MonoBehaviour {
         if (g.tag == "Enemy") {
             g.GetComponent<Enemy>().ChangeHealthBy(damage);
         }
-        print(g.name);
         Destroy(gameObject);
     }
 }

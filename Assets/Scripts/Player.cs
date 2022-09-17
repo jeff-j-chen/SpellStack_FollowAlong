@@ -3,11 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-enum EnumName {
-    FirstValue,
-    SecondValue,
-}
-
 public class Player : MonoBehaviour {
     [SerializeField] private int health = 100;
     [SerializeField] private float horizontal;

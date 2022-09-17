@@ -5,16 +5,33 @@ using UnityEngine;
 public class Enemy : MonoBehaviour {
     [SerializeField] private Player player;
     [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private float chaseSpeed = 0.3f;
+    [SerializeField] private float chaseSpeed = 2.5f;
     [SerializeField] private Color basicEnemyColor;
     [SerializeField] private int health = 100;
-    // whatever color necessary to differentiate player and enemy
+    [SerializeField] public enum EnemyType {
+        Basic,
+        Fast
+    }
+    [SerializeField] private EnemyType enemyType;
+    [SerializeField] private Color[] enemyColors; 
+    private Dictionary<EnemyType, float> enemySpeeds = new() {
+        {EnemyType.Basic, 2.5f},
+        {EnemyType.Fast, 3.5f},
+    };
+
+    private Dictionary<EnemyType, Color> enemyColorDict;
 
     private void Start() {
         rb = GetComponent<Rigidbody2D>();
         player = FindObjectOfType<Player>();
         GetComponent<SpriteRenderer>().color = basicEnemyColor;
         // student should be able to do ^ on their own
+        chaseSpeed = enemySpeeds[enemyType];
+        enemyColorDict = new Dictionary<EnemyType, Color>() {
+            {EnemyType.Basic, enemyColors[0]},
+            {EnemyType.Fast, enemyColors[1]},
+        };
+        GetComponent<SpriteRenderer>().color = enemyColorDict[enemyType];
     }
 
     private void Update() {
