@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour {
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private float chaseSpeed = 0.3f;
     [SerializeField] private Color basicEnemyColor;
+    [SerializeField] private int health = 100;
     // whatever color necessary to differentiate player and enemy
 
     private void Start() {
@@ -23,5 +24,12 @@ public class Enemy : MonoBehaviour {
         // make the enemy face in the direction of the player
         rb.velocity = transform.right * chaseSpeed;
         // enemy chases after player
+    }
+
+    public void ChangeHealthBy(int amount) {
+        health -= amount;
+        if (health <= 0) {
+            Destroy(gameObject);
+        }
     }
 }

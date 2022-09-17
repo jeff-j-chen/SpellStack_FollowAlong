@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+enum EnumName {
+    FirstValue,
+    SecondValue,
+}
+
 public class Player : MonoBehaviour {
     [SerializeField] private int health = 100;
     [SerializeField] private float horizontal;
@@ -12,8 +17,16 @@ public class Player : MonoBehaviour {
     // multiplier to prevent player from flying off the screen
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private TextMeshProUGUI healthText;
+    [SerializeField] private bool canAttack = true;
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private float bulletSpeed;
     private float moveLimiter = 1.414f;
     // sqrt2 to counteract diagonal movement (pythagorean)
+
+    private Dictionary<string, int> dictName = new() {
+        {"FirstKey", 1},
+        {"SecondKey", 2},
+    };
 
     private void Start() {
         rb = GetComponent<Rigidbody2D>();
@@ -24,6 +37,9 @@ public class Player : MonoBehaviour {
         horizontal = Input.GetAxisRaw("Horizontal");
         vertical = Input.GetAxisRaw("Vertical");
         // make sure to capitalize and use GetAxisRaw
+        if (Input.GetMouseButton(0)) {
+            AttemptAttack();
+        }
     }
 
     private void FixedUpdate() {
@@ -47,5 +63,30 @@ public class Player : MonoBehaviour {
             healthText.text = $"Player HP: {health}";
             print("took collision damage!");
         }
+    }
+
+    private float GetAngleToCursor(Vector3 pos) { 
+        Vector2 lookDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - pos;
+        return Mathf.Atan2(lookDirection.y, lookDirection.x);
+    }
+
+    private void AttemptAttack() {
+        if (canAttack) {
+            canAttack = false;
+            StartCoroutine(RefreshAttack());
+        }
+        else {
+            return;
+        }
+        GameObject fired = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+        float theta = GetAngleToCursor(transform.position);
+        fired.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, theta * Mathf.Rad2Deg));
+        fired.GetComponent<Rigidbody2D>().velocity = fired.transform.right * bulletSpeed;
+        fired.GetComponent<Bullet>().damage = 25;
+    }
+
+    private IEnumerator RefreshAttack() {
+        yield return new WaitForSeconds(1f);
+        canAttack = true;   
     }
 }

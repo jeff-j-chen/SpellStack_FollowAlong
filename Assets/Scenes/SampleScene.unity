@@ -562,7 +562,7 @@ GameObject:
   - component: {fileID: 1389753281}
   - component: {fileID: 1389753284}
   - component: {fileID: 1389753285}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -586,6 +586,10 @@ MonoBehaviour:
   vertical: 0
   movementMultiplier: 0.1
   rb: {fileID: 0}
+  healthText: {fileID: 1629720859}
+  canAttack: 1
+  bulletPrefab: {fileID: 8505746668882660580, guid: 8e78d137c6329bdcaa7b309cb52b414b, type: 3}
+  bulletSpeed: 5
 --- !u!212 &1389753282
 SpriteRenderer:
   m_ObjectHideFlags: 0
