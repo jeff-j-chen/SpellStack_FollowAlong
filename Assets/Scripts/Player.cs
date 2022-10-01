@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Player : MonoBehaviour {
+public class Player : MonoBehaviour, IDamageable {
     [SerializeField] private int health = 100;
     [SerializeField] private float horizontal;
     [SerializeField] private float vertical;
     // player's current horizontal and vertical input
     [SerializeField] private float movementMultiplier = 0.1f;
     // multiplier to prevent player from flying off the screen
-    [SerializeField] private Rigidbody2D rb;
+    [SerializeField] public Rigidbody2D rb;
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private bool canAttack = true;
     [SerializeField] private GameObject bulletPrefab;
@@ -83,5 +83,12 @@ public class Player : MonoBehaviour {
     private IEnumerator RefreshAttack() {
         yield return new WaitForSeconds(1f);
         canAttack = true;   
+    }
+
+    public void ChangeHealthBy(int amount) {
+        health -= amount;
+        if (health < 0) {
+            print("player died!");
+        }
     }
 }

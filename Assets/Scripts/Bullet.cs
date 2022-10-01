@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public interface IDamageable {
+    void ChangeHealthBy(int amount);
+}
+
 public class Bullet : MonoBehaviour {
     public int damage;
     private void Start() {
@@ -14,8 +18,8 @@ public class Bullet : MonoBehaviour {
 
     private void OnCollisionEnter2D(Collision2D other) {
         GameObject g = other.gameObject;
-        if (g.tag == "Enemy") {
-            g.GetComponent<Enemy>().ChangeHealthBy(damage);
+        if (g.GetComponent<IDamageable>() != null) {
+            g.GetComponent<IDamageable>().ChangeHealthBy(damage);
         }
         Destroy(gameObject);
     }

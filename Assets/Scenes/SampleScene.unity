@@ -1117,10 +1117,6 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 144559579357192375, guid: f05506bbc501fec88bd0a4584fde81ef, type: 3}
-      propertyPath: chaseSpeed
-      value: 2.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 144559579357192375, guid: f05506bbc501fec88bd0a4584fde81ef, type: 3}
       propertyPath: basicEnemyColor.a
       value: 1
       objectReference: {fileID: 0}
@@ -1135,42 +1131,6 @@ PrefabInstance:
     - target: {fileID: 144559579357192375, guid: f05506bbc501fec88bd0a4584fde81ef, type: 3}
       propertyPath: basicEnemyColor.r
       value: 0.28727198
-      objectReference: {fileID: 0}
-    - target: {fileID: 144559579357192375, guid: f05506bbc501fec88bd0a4584fde81ef, type: 3}
-      propertyPath: enemyColors.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 144559579357192375, guid: f05506bbc501fec88bd0a4584fde81ef, type: 3}
-      propertyPath: enemyColors.Array.data[0].a
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 144559579357192375, guid: f05506bbc501fec88bd0a4584fde81ef, type: 3}
-      propertyPath: enemyColors.Array.data[0].b
-      value: 0.16647384
-      objectReference: {fileID: 0}
-    - target: {fileID: 144559579357192375, guid: f05506bbc501fec88bd0a4584fde81ef, type: 3}
-      propertyPath: enemyColors.Array.data[0].g
-      value: 0.52240795
-      objectReference: {fileID: 0}
-    - target: {fileID: 144559579357192375, guid: f05506bbc501fec88bd0a4584fde81ef, type: 3}
-      propertyPath: enemyColors.Array.data[0].r
-      value: 0.8207547
-      objectReference: {fileID: 0}
-    - target: {fileID: 144559579357192375, guid: f05506bbc501fec88bd0a4584fde81ef, type: 3}
-      propertyPath: enemyColors.Array.data[1].a
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 144559579357192375, guid: f05506bbc501fec88bd0a4584fde81ef, type: 3}
-      propertyPath: enemyColors.Array.data[1].b
-      value: 0.19277322
-      objectReference: {fileID: 0}
-    - target: {fileID: 144559579357192375, guid: f05506bbc501fec88bd0a4584fde81ef, type: 3}
-      propertyPath: enemyColors.Array.data[1].g
-      value: 0.19277322
-      objectReference: {fileID: 0}
-    - target: {fileID: 144559579357192375, guid: f05506bbc501fec88bd0a4584fde81ef, type: 3}
-      propertyPath: enemyColors.Array.data[1].r
-      value: 0.7169812
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f05506bbc501fec88bd0a4584fde81ef, type: 3}
