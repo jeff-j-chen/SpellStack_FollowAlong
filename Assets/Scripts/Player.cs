@@ -5,17 +5,17 @@ using TMPro;
 
 public class Player : MonoBehaviour, IDamageable {
     [SerializeField] private int health = 100;
-    [SerializeField] private float horizontal;
-    [SerializeField] private float vertical;
+    [SerializeField] public float horizontal;
+    [SerializeField] public float vertical;
     // player's current horizontal and vertical input
-    [SerializeField] private float movementMultiplier = 0.1f;
+    [SerializeField] public float movementMultiplier = 0.1f;
     // multiplier to prevent player from flying off the screen
     [SerializeField] public Rigidbody2D rb;
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private bool canAttack = true;
     [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private float bulletSpeed;
-    private float moveLimiter = 1.414f;
+    [SerializeField] private float bulletSpeed = 5f;  
+    public float moveLimiter = 1.414f;
     // sqrt2 to counteract diagonal movement (pythagorean)
 
     private Dictionary<string, int> dictName = new() {
@@ -77,6 +77,7 @@ public class Player : MonoBehaviour, IDamageable {
         float theta = GetAngleToCursor(transform.position);
         fired.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, theta * Mathf.Rad2Deg));
         fired.GetComponent<Rigidbody2D>().velocity = fired.transform.right * bulletSpeed;
+        print(fired.GetComponent<Rigidbody2D>().velocity);
         fired.GetComponent<Bullet>().damage = 25;
     }
 

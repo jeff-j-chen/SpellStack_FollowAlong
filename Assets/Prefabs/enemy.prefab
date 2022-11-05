@@ -100,6 +100,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  lStrikeBorder: {fileID: 0}
+  lStrikeCenter: {fileID: 0}
+  lightningGO: {fileID: 0}
   rb: {fileID: 0}
   chaseSpeed: 2.5
   health: 100
@@ -107,9 +110,29 @@ MonoBehaviour:
   enemyColors:
   - {r: 0.8207547, g: 0.52240795, b: 0.16647384, a: 1}
   - {r: 0.7169812, g: 0.19277322, b: 0.19277322, a: 1}
+  - {r: 0.36444402, g: 0.7176471, b: 0.19215687, a: 1}
+  - {r: 0.26610893, g: 0.69597787, b: 0.8679245, a: 1}
+  - {r: 0.26666665, g: 0.8666667, b: 0.42300913, a: 1}
+  - {r: 0.8454862, g: 0.26666665, b: 0.8666667, a: 1}
+  - {r: 0.26666665, g: 0.8666667, b: 0.7518009, a: 1}
+  - {r: 0.26666665, g: 0.28928834, b: 0.8666667, a: 1}
+  - {r: 0.4990544, g: 0.26666665, b: 0.8666667, a: 1}
+  - {r: 0.82951546, g: 0.8666667, b: 0.26666665, a: 1}
+  - {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}
+  - {r: 0.33775365, g: 0.5407129, b: 0.6226415, a: 1}
   enemyBulletSprites:
   - {fileID: 21300000, guid: ab71e293d620672e8a75217aaca9ff82, type: 3}
   - {fileID: 21300000, guid: 8e62b24136988cf93a072a65bb36f747, type: 3}
+  - {fileID: 21300000, guid: a68764d99dda5b83b927acd5cc92d630, type: 3}
+  - {fileID: 21300000, guid: 8abc5216b88c21336927c8607019172d, type: 3}
+  - {fileID: 21300000, guid: 8abc5216b88c21336927c8607019172d, type: 3}
+  - {fileID: 21300000, guid: 8abc5216b88c21336927c8607019172d, type: 3}
+  - {fileID: 21300000, guid: 8abc5216b88c21336927c8607019172d, type: 3}
+  - {fileID: 21300000, guid: 8abc5216b88c21336927c8607019172d, type: 3}
+  - {fileID: 21300000, guid: 8abc5216b88c21336927c8607019172d, type: 3}
+  - {fileID: 21300000, guid: 8abc5216b88c21336927c8607019172d, type: 3}
+  - {fileID: 21300000, guid: 8abc5216b88c21336927c8607019172d, type: 3}
+  - {fileID: 21300000, guid: 8abc5216b88c21336927c8607019172d, type: 3}
   basicEnemyBullet: {fileID: 8505746668882660580, guid: db5faecc6f2b0786e99feeebe8940754, type: 3}
 --- !u!50 &144559579357192360
 Rigidbody2D:

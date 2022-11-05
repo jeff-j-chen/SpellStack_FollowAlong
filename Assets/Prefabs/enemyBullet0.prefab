@@ -136,4 +136,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af834432ed744e7db86728ba155aea1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 6786740077942802703}
   damage: 0
+  accelerationMultiplier: 0
+  isWavy: 0
+  behavior: 0
