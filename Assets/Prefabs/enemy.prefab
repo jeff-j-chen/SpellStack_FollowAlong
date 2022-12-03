@@ -100,9 +100,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  lStrikeBorder: {fileID: 0}
-  lStrikeCenter: {fileID: 0}
-  lightningGO: {fileID: 0}
+  lStrikeBorder: {fileID: 1907823186616701410, guid: 8ee99563e43ab5810ba33eda851a4dc0, type: 3}
+  lStrikeCenter: {fileID: 1775058604151484004, guid: be6938cb1d48b17ce84a6a4909815ab2, type: 3}
+  lightningGO: {fileID: 3387734558960312039, guid: 08d000edd6360ffc882317e437d9debd, type: 3}
   rb: {fileID: 0}
   chaseSpeed: 2.5
   health: 100

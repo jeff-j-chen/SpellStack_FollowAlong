@@ -12,14 +12,19 @@ public class Bullet : MonoBehaviour {
     public int damage;
     public float accelerationMultiplier = 1f;
     public bool isWavy;
+    public float waveStrength = 0f;
     public enum Behavior { Break, Linger }
     public Behavior behavior = Behavior.Break;
     private void Start() {
-        
+        if (isWavy) {
+            StartCoroutine(WaveBullet());
+        }
     }
 
     private void Update() {
-        rb.velocity *= accelerationMultiplier;
+        if (accelerationMultiplier != 1f) {
+            rb.velocity *= accelerationMultiplier;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
@@ -34,6 +39,18 @@ public class Bullet : MonoBehaviour {
                 default: throw new ArgumentOutOfRangeException();
             }
         }
-        Destroy(gameObject);
+    }
+
+    private IEnumerator WaveBullet() {
+        Vector2 original = rb.velocity;
+        Vector2 perpendicular = new Vector2(rb.velocity.y, -rb.velocity.x);
+        rb.velocity += perpendicular * waveStrength;
+        yield return new WaitForSeconds(0.25f);
+        while (true) {
+            rb.velocity = original - perpendicular * waveStrength;
+            yield return new WaitForSeconds(0.5f);
+            rb.velocity = original + perpendicular * waveStrength;
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 }

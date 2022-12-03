@@ -31,6 +31,14 @@ public class Enemy : MonoBehaviour, IDamageable {
         {EnemyType.Fast, 3f},
         {EnemyType.Tracking, 2f},
         {EnemyType.Shotgun, 1f},
+        {EnemyType.MachineGun, 1f},
+        {EnemyType.FatShot, 1f},
+        {EnemyType.ProjectileTrail, 1f},
+        {EnemyType.Accelerator, 1f},
+        {EnemyType.Splitter, 1f},
+        {EnemyType.Wavy, 1f},
+        {EnemyType.SemiAuto, 1f},
+        {EnemyType.Lighting, 1f},
     };
     private enum BulletSprites {
         Basic,
@@ -107,7 +115,7 @@ public class Enemy : MonoBehaviour, IDamageable {
     private GameObject FireProjectile(Vector3 pos, float angle, Vector3 scale, float speed, int damage, Sprite sprite, float accelerationMultiplier, bool isWavy) {
         GameObject go = Instantiate(basicEnemyBullet, pos, Quaternion.identity);
         Bullet bullet = go.GetComponent<Bullet>();
-        go.transform.rotation = Quaternio   n.Euler(new Vector3(0f, 0f, angle * Mathf.Rad2Deg));
+        go.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, angle * Mathf.Rad2Deg));
         go.GetComponent<Rigidbody2D>().velocity = bullet.transform.right * speed;
         go.GetComponent<SpriteRenderer>().sprite = sprite;
         go.transform.localScale = scale;
@@ -170,7 +178,7 @@ public class Enemy : MonoBehaviour, IDamageable {
 
     private IEnumerator LightingAttackPattern() {
         while (true) {
-            Vector2 drop = (Vector2)player.transform.position + new Vector2(Random.Range(-4, 4), Random.Range(-4, 4));
+            Vector2 drop = (Vector2)player.transform.position + new Vector2(Random.Range(-1, 1), Random.Range(-1, 1));
             GameObject b = Instantiate(lStrikeBorder, drop, Quaternion.identity);
             GameObject c = Instantiate(lStrikeCenter, drop, Quaternion.identity);
             float initial = c.transform.localScale.x;
@@ -178,10 +186,11 @@ public class Enemy : MonoBehaviour, IDamageable {
                 c.transform.localScale -= new Vector3(initial/(2f*10), initial/(2f*10), 0f);
                 yield return new WaitForSeconds(0.1f);
             }
-            GameObject l = Instantiate(lightningGO, drop + new Vector2(0, 1f), Quaternion.identity);
-            l.transform.localScale = new Vector3(4f, 4f, 1f);
-            l.GetComponent<Bullet>().damage = 30;
+            GameObject l = Instantiate(lightningGO, drop + new Vector2(0, 0.6f), Quaternion.identity);
             l.GetComponent<Bullet>().behavior = Bullet.Behavior.Linger;
+            l.GetComponent<Bullet>().damage = 30;
+            yield return new WaitForSeconds(0.01f);
+            Destroy(l.GetComponent<CapsuleCollider2D>());
             yield return new WaitForSeconds(0.3f);
             Destroy(c);
             Destroy(l);
@@ -190,34 +199,25 @@ public class Enemy : MonoBehaviour, IDamageable {
         }
     }
 
-    private IEnumerator SemiAutoAttackPattern()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(2f);
+    private IEnumerator SemiAutoAttackPattern() {
+        while (true) {
+            yield return new WaitForSeconds(1f);
             Vector2 lookDirection = player.transform.position - transform.position;
             float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
-            StartCoroutine(SemiAutoShoot(theta));
-        }
-    }
-
-    private IEnumerator SemiAutoShoot(float angleBullet)
-    {
-        int countBullet = 0;
-        while (countBullet < 3)
-        {
-            FireProjectile(
-                speed: 5f,
-                damage: 20,
-                angle: angleBullet,
-                isWavy: false,
-                pos: transform.position,
-                accelerationMultiplier: 1f,
-                scale: new Vector3(1f, 1f, 1f),
-                sprite: enemyBulletSpriteDict[BulletSprites.Basic]
-            );
-            countBullet++;
-            yield return new WaitForSeconds(0.2f);
+            for (int i = 0; i < 3; i++) {
+                float randOffset = Random.Range(-0.3f, 0.3f);
+                FireProjectile(
+                    speed: 6f, 
+                    damage: 10, 
+                    angle: theta + randOffset, 
+                    isWavy: false,
+                    pos: transform.position,
+                    accelerationMultiplier: 1f,
+                    scale: new Vector3(1.25f, 1.25f, 1f), 
+                    sprite: enemyBulletSpriteDict[BulletSprites.MachineGun]
+                );
+                yield return new WaitForSeconds(0.1f);
+            }
         }
     }
 
@@ -227,7 +227,7 @@ public class Enemy : MonoBehaviour, IDamageable {
             Vector2 lookDirection = player.transform.position - transform.position;
             float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
             GameObject fired = FireProjectile(
-                speed: 5f, 
+                speed: 4f, 
                 damage: 20, 
                 angle: theta, 
                 isWavy: false,
@@ -241,47 +241,42 @@ public class Enemy : MonoBehaviour, IDamageable {
     }
 
     private IEnumerator SplitTheBullet(GameObject fired, float theta) {
-        int countBullet = 0;
-        while(countBullet < 2)
-        {
-            yield return new WaitForSeconds(1f);
-            FireProjectile(
-                speed: 5f, 
-                damage: 20, 
-                angle: theta + 0.1f,
-                isWavy: false,
-                pos: transform.position,
-                accelerationMultiplier: 1f, 
-                scale: new Vector3(1f, 1f, 1f), 
-                sprite: enemyBulletSpriteDict[BulletSprites.Basic]
-            );
-            FireProjectile(
-                speed: 5f, 
-                damage: 20, 
-                angle: theta - 0.1f,
-                isWavy: false,
-                pos: transform.position,
-                accelerationMultiplier: 1f, 
-                scale: new Vector3(1f, 1f, 1f), 
-                sprite: enemyBulletSpriteDict[BulletSprites.Basic]
-            );
-        }
+        yield return new WaitForSeconds(0.5f);
+        FireProjectile(
+            speed: 6f, 
+            damage: 20, 
+            angle: theta + 0.3f,
+            isWavy: false,
+            pos: fired.transform.position,
+            accelerationMultiplier: 1f, 
+            scale: new Vector3(1f, 1f, 1f), 
+            sprite: enemyBulletSpriteDict[BulletSprites.Basic]
+        );
+        FireProjectile(
+            speed: 6f, 
+            damage: 20, 
+            angle: theta - 0.3f,
+            isWavy: false,
+            pos: fired.transform.position,
+            accelerationMultiplier: 1f, 
+            scale: new Vector3(1f, 1f, 1f), 
+            sprite: enemyBulletSpriteDict[BulletSprites.Basic]
+        );
+        Destroy(fired);
     }
 
-    private IEnumerator AcceleratorAttackPattern()
-    {
-        while (true)
-        {
+    private IEnumerator AcceleratorAttackPattern() {
+        while (true) {
             yield return new WaitForSeconds(1f);
             Vector2 lookDirection = player.transform.position - transform.position;
             float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
             FireProjectile(
-                speed: 5f, 
+                speed: 2f, 
                 damage: 20, 
                 angle: theta, 
                 isWavy: false,
                 pos: transform.position,
-                accelerationMultiplier: 1.5f,
+                accelerationMultiplier: 1.04f,
                 scale: new Vector3(1f, 1f, 1f), 
                 sprite: enemyBulletSpriteDict[BulletSprites.Basic]
             );
@@ -328,13 +323,13 @@ public class Enemy : MonoBehaviour, IDamageable {
 
     private IEnumerator MachineGunAttackPattern() {
         while (true) {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.3f);
             Vector2 lookDirection = player.transform.position - transform.position;
             float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
-            float randOffset = Random.Range(-0.2f, 0.2f);
+            float randOffset = Random.Range(-0.15f, 0.15f);
             FireProjectile(
                 speed: 5f, 
-                damage: 5, 
+                damage: 6, 
                 angle: theta + randOffset, 
                 isWavy: false,
                 pos: transform.position,
@@ -348,7 +343,7 @@ public class Enemy : MonoBehaviour, IDamageable {
     private IEnumerator FatShotAttackPattern() {
         while (true) {
             yield return new WaitForSeconds(2f);
-            Vector2 lookDirection = player.transform.position - transform.position;
+            Vector2 lookDirection = player.transform.position + CalculatePlayerPos(40) - transform.position;
             float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
             FireProjectile(
                 speed: 3f, 
