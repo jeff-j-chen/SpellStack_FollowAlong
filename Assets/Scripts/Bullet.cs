@@ -39,6 +39,7 @@ public class Bullet : MonoBehaviour {
                 default: throw new ArgumentOutOfRangeException();
             }
         }
+        Destroy(gameObject);
     }
 
     private IEnumerator WaveBullet() {

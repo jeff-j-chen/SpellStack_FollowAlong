@@ -25,6 +25,16 @@ public class Enemy : MonoBehaviour, IDamageable {
         Lighting,
     }
     [SerializeField] private EnemyType enemyType;
+    [SerializeField] private enum MovementType {
+        Chase,
+        Flee,
+        Maintain,
+        Stationary,
+        Jumping,
+        Support,
+        Random
+    }
+    [SerializeField] private MovementType movementType = MovementType.Chase;
     [SerializeField] private Color[] enemyColors; 
     [SerializeField] private Dictionary<EnemyType, float> enemySpeeds = new() {
         {EnemyType.Basic, 2f},
@@ -57,8 +67,10 @@ public class Enemy : MonoBehaviour, IDamageable {
     [SerializeField] private List<Sprite> enemyBulletSprites = new();
     private Dictionary<BulletSprites, Sprite> enemyBulletSpriteDict;
     private Dictionary<EnemyType, Color> enemyColorDict;
-    private delegate IEnumerator StartAttackPattern();
     private Dictionary<EnemyType, StartAttackPattern> attackPatternDict;
+    private Dictionary<MovementType, MovementFunc> movementTypeDict;
+    private delegate void MovementFunc();
+    private delegate IEnumerator StartAttackPattern();
     [SerializeField] private GameObject basicEnemyBullet;
 
     private void Start() {
@@ -93,6 +105,15 @@ public class Enemy : MonoBehaviour, IDamageable {
             {EnemyType.Wavy, WavyAttackPattern},
             {EnemyType.SemiAuto, SemiAutoAttackPattern},
             {EnemyType.Lighting, LightingAttackPattern},
+        };
+        movementTypeDict = new Dictionary<MovementType, MovementFunc>() {
+            {MovementType.Chase, ChasePlayer},
+            {MovementType.Flee, FleePlayer},
+            {MovementType.Maintain, MaintainDistance},
+            {MovementType.Stationary, Stationary},
+            {MovementType.Jumping, Jumping},
+            {MovementType.Support, Support},
+            {MovementType.Random, RandomMovement},
         };
         enemyBulletSpriteDict = new Dictionary<BulletSprites, Sprite>() {
             {BulletSprites.Basic, enemyBulletSprites[0]},
@@ -139,6 +160,8 @@ public class Enemy : MonoBehaviour, IDamageable {
         );
         return toAdd;
     }
+
+
 
     private IEnumerator BasicAttackPattern() {
         while (true) {
@@ -417,8 +440,68 @@ public class Enemy : MonoBehaviour, IDamageable {
         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
         transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, theta * Mathf.Rad2Deg));
         // make the enemy face in the direction of the player
+        movementTypeDict[movementType]();
+    }
+    
+    private void ChasePlayer() {
         rb.velocity = transform.right * chaseSpeed;
-        // enemy chases after player
+    }
+
+    private void FleePlayer() { 
+        rb.velocity = transform.right * -chaseSpeed;
+    }
+
+    private void Stationary() { 
+        rb.velocity = Vector2.zero;
+    }
+
+    private void Jumping() {
+        float timeNow = Time.time;
+        if (timeNow % 3f < 0.5) {
+            rb.velocity = transform.right * chaseSpeed * 3f;
+        }
+        else { 
+            rb.velocity = transform.right * chaseSpeed / 3f;
+        }
+    }
+
+    private void Support() { 
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        GameObject nearestEnemy = null;
+        
+        float minDistance = float.MaxValue;
+        foreach (GameObject enemy in enemies) {
+            float distance = DistFormula(transform.position, enemy.transform.position);
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestEnemy = enemy;
+            }
+        }
+        if (nearestEnemy != null) {
+            Vector2 lookDirection = nearestEnemy.transform.position - transform.position;
+            float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
+            transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, theta * Mathf.Rad2Deg));
+            rb.velocity = transform.right * chaseSpeed;
+        }
+    }
+    
+    private void RandomMovement() { 
+        float timeNow = Time.time;
+        if (timeNow % 3f < 0.01) { 
+            Vector2 lookDirection = player.transform.position - transform.position;
+            float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
+            transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, theta * Mathf.Rad2Deg));
+        }
+    }
+
+    private void MaintainDistance() { 
+        if (DistFormula(transform.position, player.transform.position) > 6f) {
+            ChasePlayer();
+        } else if (DistFormula(transform.position, player.transform.position) < 5f) {
+            FleePlayer();
+        } else {
+            rb.velocity = Vector2.zero;
+        }
     }
 
     public void ChangeHealthBy(int amount) {
@@ -426,5 +509,9 @@ public class Enemy : MonoBehaviour, IDamageable {
         if (health <= 0) {
             Destroy(gameObject);
         }
+    }
+    
+    private float DistFormula(Vector3 pos1, Vector3 pos2) {
+        return Mathf.Sqrt((pos1.x - pos2.x) * (pos1.x - pos2.x) + (pos1.y - pos2.y) * (pos1.y - pos2.y));
     }
 }
