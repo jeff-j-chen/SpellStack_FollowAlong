@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour, IDamageable {
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private float chaseSpeed = 2.5f;
     [SerializeField] private int health = 100;
+    private int phase = 1;
     [SerializeField] public enum EnemyType {
         Basic,
         Fast,
@@ -23,6 +24,8 @@ public class Enemy : MonoBehaviour, IDamageable {
         Wavy,
         SemiAuto,
         Lighting,
+        Boss1,
+        Boss2,
     }
     [SerializeField] private EnemyType enemyType;
     [SerializeField] private enum MovementType {
@@ -49,6 +52,8 @@ public class Enemy : MonoBehaviour, IDamageable {
         {EnemyType.Wavy, 1f},
         {EnemyType.SemiAuto, 1f},
         {EnemyType.Lighting, 1f},
+        {EnemyType.Boss1, 1f},
+        {EnemyType.Boss2, 1f}
     };
     private enum BulletSprites {
         Basic,
@@ -69,7 +74,10 @@ public class Enemy : MonoBehaviour, IDamageable {
     private Dictionary<EnemyType, Color> enemyColorDict;
     private Dictionary<EnemyType, StartAttackPattern> attackPatternDict;
     private Dictionary<MovementType, MovementFunc> movementTypeDict;
+    private Dictionary<EnemyType, int> enemyHealth;
     private delegate void MovementFunc();
+    private Coroutine phaseCoroutine;
+    private Coroutine currentAttackPatternCoroutine;
     private delegate IEnumerator StartAttackPattern();
     [SerializeField] private GameObject basicEnemyBullet;
 
@@ -77,6 +85,22 @@ public class Enemy : MonoBehaviour, IDamageable {
         rb = GetComponent<Rigidbody2D>();
         player = FindObjectOfType<Player>();
         chaseSpeed = enemySpeeds[enemyType];
+        enemyHealth = new Dictionary<EnemyType, int>() {
+            {EnemyType.Basic, 100},
+            {EnemyType.Fast, 100},
+            {EnemyType.Tracking, 100},
+            {EnemyType.Shotgun, 100},
+            {EnemyType.MachineGun, 100},
+            {EnemyType.FatShot, 100},
+            {EnemyType.ProjectileTrail, 100},
+            {EnemyType.Accelerator, 100},
+            {EnemyType.Splitter, 100},
+            {EnemyType.Wavy, 100},
+            {EnemyType.SemiAuto, 100},
+            {EnemyType.Lighting, 100},
+            {EnemyType.Boss1, 500},
+            {EnemyType.Boss2, 500}
+        };
         enemyColorDict = new Dictionary<EnemyType, Color>() {
             {EnemyType.Basic, enemyColors[0]},
             {EnemyType.Fast, enemyColors[1]},
@@ -90,6 +114,8 @@ public class Enemy : MonoBehaviour, IDamageable {
             {EnemyType.Wavy, enemyColors[9]},
             {EnemyType.SemiAuto, enemyColors[10]},
             {EnemyType.Lighting, enemyColors[11]},
+            {EnemyType.Boss1, enemyColors[12]},
+            {EnemyType.Boss2, enemyColors[13]}
         };
         GetComponent<SpriteRenderer>().color = enemyColorDict[enemyType];
         attackPatternDict = new Dictionary<EnemyType, StartAttackPattern>() {
@@ -105,6 +131,8 @@ public class Enemy : MonoBehaviour, IDamageable {
             {EnemyType.Wavy, WavyAttackPattern},
             {EnemyType.SemiAuto, SemiAutoAttackPattern},
             {EnemyType.Lighting, LightingAttackPattern},
+            {EnemyType.Boss1, Boss1AttackPattern},
+            {EnemyType.Boss2, Boss2AttackPattern}
         };
         movementTypeDict = new Dictionary<MovementType, MovementFunc>() {
             {MovementType.Chase, ChasePlayer},
@@ -123,14 +151,16 @@ public class Enemy : MonoBehaviour, IDamageable {
             {BulletSprites.MachineGun, enemyBulletSprites[4]},
             {BulletSprites.FatShot, enemyBulletSprites[5]},
             {BulletSprites.ProjectileTrail, enemyBulletSprites[6]},
-            {BulletSprites.Accelerator, enemyBulletSprites[7]},
+            {BulletSprites.Accelerator, enemyBulletSprites[7]}, 
             {BulletSprites.Splitter, enemyBulletSprites[8]},
             {BulletSprites.Wavy, enemyBulletSprites[9]},
             {BulletSprites.SemiAuto, enemyBulletSprites[10]},
             {BulletSprites.Lighting, enemyBulletSprites[11]},
         };
+        
+        health = enemyHealth[enemyType];
         GetComponent<SpriteRenderer>().color = enemyColorDict[enemyType];
-        StartCoroutine(attackPatternDict[enemyType]());        
+        currentAttackPatternCoroutine = StartCoroutine(attackPatternDict[enemyType]()); 
     }
 
     private GameObject FireProjectile(Vector3 pos, float angle, Vector3 scale, float speed, int damage, Sprite sprite, float accelerationMultiplier, bool isWavy) {
@@ -161,6 +191,76 @@ public class Enemy : MonoBehaviour, IDamageable {
         return toAdd;
     }
 
+    private IEnumerator Boss1AttackPattern(){
+        if (health >= 250){
+            phaseCoroutine = StartCoroutine(ShotgunAttackPattern());
+            yield return new WaitForSeconds(1f);
+        }
+        else{
+            yield return new WaitForSeconds(1f);
+            StartCoroutine(MachineGunAttackPattern());
+            StartCoroutine(LightingAttackPattern());
+        }
+    }
+
+    private IEnumerator Boss2AttackPattern(){
+        if (health >= 250){
+            phaseCoroutine = StartCoroutine(ShotgunAttackPattern());
+            yield return new WaitForSeconds(1f);
+        }
+        else{
+            float spin = 0f;
+            while(true)
+            {
+                yield return new WaitForSeconds(0.5f);
+                Vector2 lookDirection = player.transform.position - transform.position;
+                float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
+                
+                FireProjectile(
+                    speed: 5f, 
+                    damage: 6, 
+                    angle: spin, 
+                    isWavy: false,
+                    pos: transform.position,
+                    accelerationMultiplier: 1f,
+                    scale: new Vector3(1.25f, 1.25f, 1f), 
+                    sprite: enemyBulletSpriteDict[BulletSprites.MachineGun]
+                );
+                FireProjectile(
+                    speed: 5f, 
+                    damage: 6, 
+                    angle: spin+1.571f, 
+                    isWavy: false,
+                    pos: transform.position,
+                    accelerationMultiplier: 1f,
+                    scale: new Vector3(1.25f, 1.25f, 1f), 
+                    sprite: enemyBulletSpriteDict[BulletSprites.MachineGun]
+                );
+                FireProjectile(
+                    speed: 5f, 
+                    damage: 6, 
+                    angle: spin+3.142f, 
+                    isWavy: false,
+                    pos: transform.position,
+                    accelerationMultiplier: 1f,
+                    scale: new Vector3(1.25f, 1.25f, 1f), 
+                    sprite: enemyBulletSpriteDict[BulletSprites.MachineGun]
+                );
+                FireProjectile(
+                    speed: 5f, 
+                    damage: 6, 
+                    angle: spin+4.712f, 
+                    isWavy: false,
+                    pos: transform.position,
+                    accelerationMultiplier: 1f,
+                    scale: new Vector3(1.25f, 1.25f, 1f), 
+                    sprite: enemyBulletSpriteDict[BulletSprites.MachineGun]
+                );
+                spin += 1f;
+            }
+            
+        }
+    }
 
 
     private IEnumerator BasicAttackPattern() {
@@ -508,6 +608,14 @@ public class Enemy : MonoBehaviour, IDamageable {
         health -= amount;
         if (health <= 0) {
             Destroy(gameObject);
+        }
+        if(enemyType == EnemyType.Boss1){
+            StopCoroutine(phaseCoroutine);
+            StartCoroutine(Boss1AttackPattern());
+        }
+        if(enemyType == EnemyType.Boss2){
+            StopCoroutine(phaseCoroutine);
+            StartCoroutine(Boss2AttackPattern());
         }
     }
     
