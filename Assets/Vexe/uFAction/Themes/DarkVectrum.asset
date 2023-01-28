@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39bfdd54800a8d54187b08206260af55, type: 3}
+  m_Name: DarkVectrum
+  m_EditorClassIdentifier: 
+  gameObjectsColors:
+    name: GameObjectsColors
+    index: 1
+    colors:
+    - {r: .566176474, g: 1, b: .640973628, a: 1}
+    - {r: .404411793, g: 1, b: .408519268, a: 1}
+    foldout: 1
+  targetsColors:
+    name: TargetsColors
+    index: 1
+    colors:
+    - {r: 1, g: .683823526, b: .938945293, a: 1}
+    - {r: 1, g: .729411721, b: .991708994, a: 1}
+    foldout: 1
+  methodsColors:
+    name: MethodsColors
+    index: 1
+    colors:
+    - {r: .698529422, g: .950101376, b: 1, a: 1}
+    - {r: .514705896, g: .89861536, b: 1, a: 1}
+    foldout: 1

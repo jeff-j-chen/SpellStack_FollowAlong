@@ -1,0 +1,24 @@
+fileFormatVersion: 2
+guid: 27c664b3dae723b478c4b30eb51a4916
+labels:
+- delegate
+- unity3ddelegate
+- serializabledelegate
+- serializedelegate
+- editordelegate
+- delegates
+- inspectabledelegate
+- unitydelegate
+- unityaction
+- unityfunc
+- serializeaction
+- serializefunc
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
