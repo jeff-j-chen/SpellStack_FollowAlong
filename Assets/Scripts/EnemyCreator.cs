@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -10,17 +11,31 @@ public class EnemyCreator : MonoBehaviour {
     [SerializeField] private List<Sprite> bulletSpriteList;
     private enum BulletSprites {
         Basic, 
-        Rock
+        Fast
     }
     private Dictionary<BulletSprites, Sprite> bulletSpriteDict;
     public EnemyData basicEnemy;
+    public EnemyData fastEnemy;
+    public Dictionary<AttackPattern, AttackFunc> attackFuncDict;
+    public Dictionary<MovementPattern, MovementFunc> movementFuncDict;
 
     private void Start() {
         bulletSpriteDict = new Dictionary<BulletSprites, Sprite>() {
             {BulletSprites.Basic, bulletSpriteList[0]},
-            {BulletSprites.Rock, bulletSpriteList[1]},
+            {BulletSprites.Fast, bulletSpriteList[1]},
         };
-
+        attackFuncDict = new Dictionary<AttackPattern, AttackFunc>() {
+            {AttackPattern.BasicAttackPattern, BasicAttackPattern},
+            {AttackPattern.FastAttackPattern, FastAttackPattern},
+        };
+        movementFuncDict = new Dictionary<MovementPattern, MovementFunc>() {
+            {MovementPattern.ChasePlayer, ChasePlayer},
+            {MovementPattern.FleePlayer, FleePlayer},
+            {MovementPattern.Stationary, Stationary},
+            {MovementPattern.Jumping, Jumping},
+            {MovementPattern.Support, Support},
+            {MovementPattern.MaintainDistance, MaintainDistance},
+        };
     }
 
     // // // // // // //
@@ -89,17 +104,32 @@ public class EnemyCreator : MonoBehaviour {
     // // // // // // //
 
     private void BasicAttackPattern(Enemy enemy) {
-        Vector2 lookDirection = enemy.player.transform.position - transform.position;
+        Vector2 lookDirection = enemy.player.transform.position - enemy.transform.position;
         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
         enemy.FireProjectile(
             speed: 5f, 
             damage: 20, 
             angle: theta, 
             isWavy: false,
-            pos: transform.position,
+            pos: enemy.transform.position,
             accelerationMultiplier: 1f,
             scale: new Vector3(1f, 1f, 1f), 
             sprite: bulletSpriteDict[BulletSprites.Basic]
+        );
+    }
+
+    private void FastAttackPattern(Enemy enemy) {
+        Vector2 lookDirection = enemy.player.transform.position - enemy.transform.position;
+        float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
+        enemy.FireProjectile(
+            speed: 5f, 
+            damage: 20, 
+            angle: theta, 
+            isWavy: false,
+            pos: enemy.transform.position,
+            accelerationMultiplier: 1.01f,
+            scale: new Vector3(1f, 1f, 1f), 
+            sprite: bulletSpriteDict[BulletSprites.Fast]
         );
     }
     
@@ -172,41 +202,6 @@ public class EnemyCreator : MonoBehaviour {
     //     }
     // }
 
-    // private IEnumerator BasicAttackPattern() {
-    //     while (true) {
-    //         yield return new WaitForSeconds(1f);
-    //         Vector2 lookDirection = player.transform.position - transform.position;
-    //         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
-    //         FireProjectile(
-    //             speed: 5f, 
-    //             damage: 20, 
-    //             angle: theta, 
-    //             isWavy: false,
-    //             pos: transform.position,
-    //             accelerationMultiplier: 1f,
-    //             scale: new Vector3(1f, 1f, 1f), 
-    //             sprite: enemyBulletSpriteDict[BulletSprites.Basic]
-    //         );
-    //     }
-    // }
-    
-    // private IEnumerator FastAttackPattern() {
-    //     while (true) {
-    //         yield return new WaitForSeconds(1.5f);
-    //         Vector2 lookDirection = player.transform.position - transform.position;
-    //         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
-    //         FireProjectile(
-    //             speed: 5f, 
-    //             damage: 20, 
-    //             angle: theta, 
-    //             isWavy: false,
-    //             pos: transform.position,
-    //             accelerationMultiplier: 1.01f,
-    //             scale: new Vector3(1f, 1f, 1f), 
-    //             sprite: enemyBulletSpriteDict[BulletSprites.Basic]
-    //         );
-    //     }
-    // }
 
     // private IEnumerator LightingAttackPattern() {
     //     while (true) {

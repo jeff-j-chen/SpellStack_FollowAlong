@@ -2,6 +2,22 @@ using UnityEngine;
 using UnityEngine.Events;
 using System.Collections;
 
+public enum AttackPattern {
+    BasicAttackPattern,
+    FastAttackPattern,
+}
+
+public enum MovementPattern {
+    ChasePlayer,
+    FleePlayer,
+    Stationary,
+    Jumping,
+    Support,
+    MaintainDistance,
+}
+
+public delegate void MovementFunc(Enemy enemy);
+public delegate void AttackFunc(Enemy enemy);
 
 [System.Serializable]
 public class EnemyData {
@@ -9,12 +25,11 @@ public class EnemyData {
     public float chaseSpeed;
     public float attackWaitTime;
 
-    public UnityEvent MovementFunc;
-    // public MovementFuncDelegate MovementFunc;
+    public AttackPattern attackPattern;
+    public AttackFunc attackFunc;
 
-    public UnityEvent AttackPattern;
-    // public AttackPatternDelegate AttackPattern;
-
+    public MovementPattern movementPattern;
+    public MovementFunc movementFunc;
+    
     public Color color;
-    public Sprite sprite;
 }

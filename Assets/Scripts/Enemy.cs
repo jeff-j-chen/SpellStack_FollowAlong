@@ -1,24 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Enemy : MonoBehaviour, IDamageable {
 
-    [SerializeField] public EnemyData enemyData;
+    [SerializeField] public EnemyData data;
     [SerializeField] public float chaseSpeed; 
     [SerializeField] private int health; 
     [SerializeField] public Player player;
     [SerializeField] public Rigidbody2D rb;
     [SerializeField] private GameObject basicEnemyBullet;
+    public AttackFunc attackFunc;
+    public MovementFunc movementFunc;
     private WaitForSeconds attackDelay;
 
-
     private void Start() {
-        chaseSpeed = enemyData.chaseSpeed;
-        health = enemyData.health;
+        chaseSpeed = data.chaseSpeed;
+        health = data.health;
         rb = GetComponent<Rigidbody2D>();
         player = FindObjectOfType<Player>();
-        attackDelay = new WaitForSeconds(enemyData.attackWaitTime);
+        attackDelay = new WaitForSeconds(data.attackWaitTime);
+        GetComponent<SpriteRenderer>().color = data.color;
         StartCoroutine(Attack());
     }
 
@@ -26,30 +29,15 @@ public class Enemy : MonoBehaviour, IDamageable {
         Vector2 lookDirection = player.transform.position - transform.position;
         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
         transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, theta * Mathf.Rad2Deg));
-        enemyData.MovementFunc.Invoke(this);
+        movementFunc(this);
     }
 
     private IEnumerator Attack() {
-        yield return attackDelay;
-        enemyData.AttackPattern.Invoke(this);
+        while (true) {
+            yield return attackDelay;
+            attackFunc(this);
+        }
     }
-
-
-
-
-
-
-
-
-
-    // CHANGE TO SCRIPTABLE OBJECTS, ADD PARAMETERS TO UNITY EVENTS
-
-
-
-
-
-
-
     
     public void ChangeHealthBy(int amount) {
         health -= amount;

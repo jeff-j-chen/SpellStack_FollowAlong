@@ -56,7 +56,6 @@ public class Player : MonoBehaviour, IDamageable {
         if (collision.gameObject.name.Contains("enemy")) {
             health -= 10;
             healthText.text = $"Player HP: {health}";
-            print("took collision damage!");
         }
     }
 
