@@ -1006,26 +1006,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6aec4bde252ba242a8a38d8554ae34aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyBase: {fileID: 144559579357192363, guid: f05506bbc501fec88bd0a4584fde81ef, type: 3}
   lStrikeBorder: {fileID: 1907823186616701410, guid: 8ee99563e43ab5810ba33eda851a4dc0, type: 3}
   lStrikeCenter: {fileID: 1775058604151484004, guid: be6938cb1d48b17ce84a6a4909815ab2, type: 3}
   lightningGO: {fileID: 3387734558960312039, guid: 08d000edd6360ffc882317e437d9debd, type: 3}
   bulletSpriteList:
-  - {fileID: 21300000, guid: 8d299cbcc6356a9b284b025d4031b057, type: 3}
+  - {fileID: 21300000, guid: ab71e293d620672e8a75217aaca9ff82, type: 3}
+  - {fileID: 21300000, guid: a68764d99dda5b83b927acd5cc92d630, type: 3}
+  - {fileID: 21300000, guid: 8e62b24136988cf93a072a65bb36f747, type: 3}
   - {fileID: 21300000, guid: 8abc5216b88c21336927c8607019172d, type: 3}
+  - {fileID: 21300000, guid: 764b3beebcd968fb0b9ceefbae6b8476, type: 3}
+  - {fileID: 21300000, guid: 2fc67c6e1a84dcbe09c207980c3aa368, type: 3}
+  - {fileID: 21300000, guid: 3e4864da7ff2808378eda5639c2b31c5, type: 3}
   basicEnemy:
     health: 100
     chaseSpeed: 1
     attackWaitTime: 1
+    color: {r: 1, g: 0, b: 0, a: 1}
     attackPattern: 0
     movementPattern: 0
-    color: {r: 1, g: 0, b: 0, a: 1}
   fastEnemy:
     health: 100
     chaseSpeed: 2
     attackWaitTime: 0.5
+    color: {r: 0.97504056, g: 1, b: 0, a: 1}
     attackPattern: 1
     movementPattern: 1
-    color: {r: 0.97504056, g: 1, b: 0, a: 1}
 --- !u!114 &2112226480
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1038,7 +1044,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 354bd3225ad990974a5ab55badc2b254, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyBase: {fileID: 144559579357192363, guid: f05506bbc501fec88bd0a4584fde81ef, type: 3}
   enemyCreator: {fileID: 2112226479}
 --- !u!4 &2112226481
 Transform:
@@ -1048,7 +1053,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2112226478}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 5.99, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

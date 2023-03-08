@@ -17,19 +17,16 @@ public enum MovementPattern {
 }
 
 public delegate void MovementFunc(Enemy enemy);
-public delegate void AttackFunc(Enemy enemy);
+public delegate IEnumerator AttackFunc(Enemy enemy);
 
 [System.Serializable]
 public class EnemyData {
     public int health;
     public float chaseSpeed;
     public float attackWaitTime;
+    public Color color;
 
     public AttackPattern attackPattern;
-    public AttackFunc attackFunc;
-
     public MovementPattern movementPattern;
-    public MovementFunc movementFunc;
     
-    public Color color;
 }

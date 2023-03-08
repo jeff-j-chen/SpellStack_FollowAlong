@@ -7,7 +7,7 @@ public class Enemy : MonoBehaviour, IDamageable {
 
     [SerializeField] public EnemyData data;
     [SerializeField] public float chaseSpeed; 
-    [SerializeField] private int health; 
+    [SerializeField] public int health; 
     [SerializeField] public Player player;
     [SerializeField] public Rigidbody2D rb;
     [SerializeField] private GameObject basicEnemyBullet;
@@ -35,7 +35,7 @@ public class Enemy : MonoBehaviour, IDamageable {
     private IEnumerator Attack() {
         while (true) {
             yield return attackDelay;
-            attackFunc(this);
+            StartCoroutine(attackFunc(this));
         }
     }
     
