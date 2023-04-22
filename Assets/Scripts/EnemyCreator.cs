@@ -8,8 +8,9 @@ public class EnemyCreator : MonoBehaviour {
     [SerializeField] private GameObject lStrikeBorder;
     [SerializeField] private GameObject lStrikeCenter;
     [SerializeField] private GameObject lightningGO;
-
+    [SerializeField] private GameObject basicEnemyBullet;
     [SerializeField] private List<Sprite> bulletSpriteList;
+    [SerializeField] public Player player;
     private enum BulletSprites {
         Basic, 
         Fast,
@@ -48,14 +49,16 @@ public class EnemyCreator : MonoBehaviour {
             {MovementPattern.Support, Support},
             {MovementPattern.MaintainDistance, MaintainDistance},
         };
+        player = FindObjectOfType<Player>();
+        SpawnEnemy(basicEnemy);
     }
 
     public void SpawnEnemy(EnemyData enemyData) {
         GameObject go = Instantiate(enemyBase, transform.position, Quaternion.identity);
         Enemy enemy = go.GetComponent<Enemy>();
         enemy.data = enemyData;
-        enemy.attackFunc = attackFuncDict[enemy.data.attackPattern];
-        enemy.movementFunc = movementFuncDict[enemy.data.movementPattern];
+        enemy.attackFunc = attackFuncDict[enemyData.attackPattern];
+        enemy.movementFunc = movementFuncDict[enemyData.movementPattern];
     }
 
     // // // // // // //
@@ -64,10 +67,12 @@ public class EnemyCreator : MonoBehaviour {
     // 
     // // // // // // //
     private void ChasePlayer(Enemy enemy) {
+        FacePlayer(enemy);
         enemy.rb.velocity = enemy.transform.right * enemy.chaseSpeed;
     }
 
-    private void FleePlayer(Enemy enemy) { 
+    private void FleePlayer(Enemy enemy) {
+        FacePlayer(enemy);
         enemy.rb.velocity = enemy.transform.right * -enemy.chaseSpeed;
     }
 
@@ -76,8 +81,9 @@ public class EnemyCreator : MonoBehaviour {
     }
 
     private void Jumping(Enemy enemy) {
+        FacePlayer(enemy);
         float timeNow = Time.time;
-        if (timeNow % 3f < 0.5) {
+        if (timeNow % 3f < 0.5f) {
             enemy.rb.velocity = enemy.transform.right * enemy.chaseSpeed * 3f;
         }
         else { 
@@ -86,6 +92,7 @@ public class EnemyCreator : MonoBehaviour {
     }
 
     private void Support(Enemy enemy) { 
+        FacePlayer(enemy);
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         GameObject nearestEnemy = null;
         
@@ -106,15 +113,22 @@ public class EnemyCreator : MonoBehaviour {
     }
     
     private void MaintainDistance(Enemy enemy) { 
-        if (DistFormula(transform.position, enemy.player.transform.position) > 6f) {
+        FacePlayer(enemy);
+        if (DistFormula(transform.position, player.transform.position) > 6f) {
             ChasePlayer(enemy);
         } 
-        else if (DistFormula(transform.position, enemy.player.transform.position) < 5f) {
+        else if (DistFormula(transform.position, player.transform.position) < 5f) {
             FleePlayer(enemy);
         } 
         else {
             enemy.rb.velocity = Vector2.zero;
         }
+    }
+
+    private void FacePlayer(Enemy enemy) { 
+        Vector2 lookDirection = player.transform.position - enemy.transform.position;
+        float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
+        enemy.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, theta * Mathf.Rad2Deg));
     }
     
     // // // // // // //
@@ -123,10 +137,23 @@ public class EnemyCreator : MonoBehaviour {
     // 
     // // // // // // //
 
+    public GameObject FireProjectile(Vector3 pos, float angle, Vector3 scale, float speed, int damage, Sprite sprite, float accelerationMultiplier, bool isWavy) {
+        GameObject go = Instantiate(basicEnemyBullet, pos, Quaternion.identity);
+        Bullet bullet = go.GetComponent<Bullet>();
+        go.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, angle * Mathf.Rad2Deg));
+        go.GetComponent<Rigidbody2D>().velocity = bullet.transform.right * speed;
+        go.GetComponent<SpriteRenderer>().sprite = sprite;
+        go.transform.localScale = scale;
+        bullet.damage = damage;
+        bullet.accelerationMultiplier = accelerationMultiplier;
+        bullet.isWavy = isWavy;
+        return go;
+    }
+
     private IEnumerator BasicAttackPattern(Enemy enemy) {
-        Vector2 lookDirection = enemy.player.transform.position - enemy.transform.position;
+        Vector2 lookDirection = player.transform.position - enemy.transform.position;
         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
-        enemy.FireProjectile(
+        FireProjectile(
             speed: 5f, 
             damage: 20, 
             angle: theta, 
@@ -140,9 +167,9 @@ public class EnemyCreator : MonoBehaviour {
     }
 
     private IEnumerator FastAttackPattern(Enemy enemy) {
-        Vector2 lookDirection = enemy.player.transform.position - enemy.transform.position;
+        Vector2 lookDirection = player.transform.position - enemy.transform.position;
         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
-        enemy.FireProjectile(
+        FireProjectile(
             speed: 5f, 
             damage: 20, 
             angle: theta, 
@@ -156,7 +183,7 @@ public class EnemyCreator : MonoBehaviour {
     }
     
     private IEnumerator LightingAttackPattern(Enemy enemy) {
-        Vector2 drop = (Vector2)enemy.player.transform.position + new Vector2(Random.Range(-1, 1), Random.Range(-1, 1));
+        Vector2 drop = (Vector2)player.transform.position + new Vector2(Random.Range(-1, 1), Random.Range(-1, 1));
         GameObject b = Instantiate(lStrikeBorder, drop, Quaternion.identity);
         GameObject c = Instantiate(lStrikeCenter, drop, Quaternion.identity);
         float initial = c.transform.localScale.x;
@@ -176,11 +203,11 @@ public class EnemyCreator : MonoBehaviour {
     }
 
     private IEnumerator SemiAutoAttackPattern(Enemy enemy) {
-        Vector2 lookDirection = enemy.player.transform.position - enemy.transform.position;
+        Vector2 lookDirection = player.transform.position - enemy.transform.position;
         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
         for (int i = 0; i < 3; i++) {
             float randOffset = Random.Range(-0.3f, 0.3f);
-            enemy.FireProjectile(
+            FireProjectile(
                 speed: 6f, 
                 damage: 10, 
                 angle: theta + randOffset, 
@@ -195,9 +222,9 @@ public class EnemyCreator : MonoBehaviour {
     }
 
     private IEnumerator SplitterAttackPattern(Enemy enemy) {
-        Vector2 lookDirection = enemy.player.transform.position - enemy.transform.position;
+        Vector2 lookDirection = player.transform.position - enemy.transform.position;
         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
-        GameObject fired = enemy.FireProjectile(
+        GameObject fired = FireProjectile(
             speed: 4f, 
             damage: 20, 
             angle: theta, 
@@ -213,7 +240,7 @@ public class EnemyCreator : MonoBehaviour {
 
     private IEnumerator SplitTheBullet(GameObject fired, float theta, Enemy enemy) {
         yield return new WaitForSeconds(0.5f);
-        enemy.FireProjectile(
+        FireProjectile(
             speed: 6f, 
             damage: 20, 
             angle: theta + 0.3f,
@@ -223,7 +250,7 @@ public class EnemyCreator : MonoBehaviour {
             scale: new Vector3(1f, 1f, 1f), 
             sprite: bulletSpriteDict[BulletSprites.Basic]
         );
-        enemy.FireProjectile(
+        FireProjectile(
             speed: 6f, 
             damage: 20, 
             angle: theta - 0.3f,
@@ -237,9 +264,9 @@ public class EnemyCreator : MonoBehaviour {
     }
 
     private IEnumerator AcceleratorAttackPattern(Enemy enemy) {
-        Vector2 lookDirection = enemy.player.transform.position - enemy.transform.position;
+        Vector2 lookDirection = player.transform.position - enemy.transform.position;
         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
-        enemy.FireProjectile(
+        FireProjectile(
             speed: 2f, 
             damage: 20, 
             angle: theta, 
@@ -253,9 +280,9 @@ public class EnemyCreator : MonoBehaviour {
     }
 
     private IEnumerator TrackingAttackPattern(Enemy enemy) {
-        Vector2 lookDirection = enemy.player.transform.position + CalculatePlayerPos(enemy.player, 40) - transform.position;
+        Vector2 lookDirection = player.transform.position + CalculatePlayerPos(player, 40) - transform.position;
         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
-        enemy.FireProjectile(
+        FireProjectile(
             speed: 7f, 
             damage: 10, 
             angle: theta, 
@@ -269,10 +296,10 @@ public class EnemyCreator : MonoBehaviour {
     }
 
     private IEnumerator ShotgunAttackPattern(Enemy enemy) {
-        Vector2 lookDirection = enemy.player.transform.position - enemy.transform.position;
+        Vector2 lookDirection = player.transform.position - enemy.transform.position;
         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
         for (int i = -2; i < 3; i++) {
-            enemy.FireProjectile(
+            FireProjectile(
                 speed: 4f, 
                 damage: 6, 
                 angle: theta + (i * 0.2f), 
@@ -287,10 +314,10 @@ public class EnemyCreator : MonoBehaviour {
     }
 
     private IEnumerator MachineGunAttackPattern(Enemy enemy) {
-        Vector2 lookDirection = enemy.player.transform.position - enemy.transform.position;
+        Vector2 lookDirection = player.transform.position - enemy.transform.position;
         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
         float randOffset = Random.Range(-0.15f, 0.15f);
-        enemy.FireProjectile(
+        FireProjectile(
             speed: 5f, 
             damage: 6, 
             angle: theta + randOffset, 
@@ -304,9 +331,9 @@ public class EnemyCreator : MonoBehaviour {
     }
 
     private IEnumerator FatShotAttackPattern(Enemy enemy) {
-        Vector2 lookDirection = enemy.player.transform.position + CalculatePlayerPos(enemy.player, 40) - transform.position;
+        Vector2 lookDirection = player.transform.position + CalculatePlayerPos(player, 40) - transform.position;
         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
-        enemy.FireProjectile(
+        FireProjectile(
             speed: 3f, 
             damage: 30, 
             angle: theta,
@@ -320,9 +347,9 @@ public class EnemyCreator : MonoBehaviour {
     }
 
     private IEnumerator ProjectileTrailAttackPattern(Enemy enemy) {
-        Vector2 lookDirection = enemy.player.transform.position - enemy.transform.position;
+        Vector2 lookDirection = player.transform.position - enemy.transform.position;
         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
-        enemy.FireProjectile(
+        FireProjectile(
             speed: 0f, 
             damage: 10, 
             angle: theta,
@@ -336,9 +363,9 @@ public class EnemyCreator : MonoBehaviour {
     }
 
     private IEnumerator WavyAttackPattern(Enemy enemy) {
-        Vector2 lookDirection = enemy.player.transform.position - enemy.transform.position;
+        Vector2 lookDirection = player.transform.position - enemy.transform.position;
         float theta = Mathf.Atan2(lookDirection.y, lookDirection.x);
-        enemy.FireProjectile(
+        FireProjectile(
             speed: 5f, 
             damage: 10, 
             angle: theta,
@@ -371,7 +398,7 @@ public class EnemyCreator : MonoBehaviour {
     //         while(true)
     //         {
     //             yield return new WaitForSeconds(0.5f);
-    //             enemy.FireProjectile(
+    //             FireProjectile(
     //                 speed: 5f, 
     //                 damage: 6, 
     //                 angle: spin, 
@@ -381,7 +408,7 @@ public class EnemyCreator : MonoBehaviour {
     //                 scale: new Vector3(1.25f, 1.25f, 1f), 
     //                 sprite: bulletSpriteDict[BulletSprites.MachineGun]
     //             );
-    //             enemy.FireProjectile(
+    //             FireProjectile(
     //                 speed: 5f, 
     //                 damage: 6, 
     //                 angle: spin+1.571f, 
@@ -391,7 +418,7 @@ public class EnemyCreator : MonoBehaviour {
     //                 scale: new Vector3(1.25f, 1.25f, 1f), 
     //                 sprite: bulletSpriteDict[BulletSprites.MachineGun]
     //             );
-    //             enemy.FireProjectile(
+    //             FireProjectile(
     //                 speed: 5f, 
     //                 damage: 6, 
     //                 angle: spin+3.142f, 
@@ -401,7 +428,7 @@ public class EnemyCreator : MonoBehaviour {
     //                 scale: new Vector3(1.25f, 1.25f, 1f), 
     //                 sprite: bulletSpriteDict[BulletSprites.MachineGun]
     //             );
-    //             enemy.FireProjectile(
+    //             FireProjectile(
     //                 speed: 5f, 
     //                 damage: 6, 
     //                 angle: spin+4.712f, 

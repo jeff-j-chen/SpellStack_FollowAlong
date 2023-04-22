@@ -988,7 +988,7 @@ GameObject:
   - component: {fileID: 2112226480}
   - component: {fileID: 2112226479}
   m_Layer: 0
-  m_Name: WaveManager
+  m_Name: WaveManager/EnemyCreator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1010,6 +1010,7 @@ MonoBehaviour:
   lStrikeBorder: {fileID: 1907823186616701410, guid: 8ee99563e43ab5810ba33eda851a4dc0, type: 3}
   lStrikeCenter: {fileID: 1775058604151484004, guid: be6938cb1d48b17ce84a6a4909815ab2, type: 3}
   lightningGO: {fileID: 3387734558960312039, guid: 08d000edd6360ffc882317e437d9debd, type: 3}
+  basicEnemyBullet: {fileID: 8505746668882660580, guid: db5faecc6f2b0786e99feeebe8940754, type: 3}
   bulletSpriteList:
   - {fileID: 21300000, guid: ab71e293d620672e8a75217aaca9ff82, type: 3}
   - {fileID: 21300000, guid: a68764d99dda5b83b927acd5cc92d630, type: 3}
@@ -1018,6 +1019,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 764b3beebcd968fb0b9ceefbae6b8476, type: 3}
   - {fileID: 21300000, guid: 2fc67c6e1a84dcbe09c207980c3aa368, type: 3}
   - {fileID: 21300000, guid: 3e4864da7ff2808378eda5639c2b31c5, type: 3}
+  player: {fileID: 0}
   basicEnemy:
     health: 100
     chaseSpeed: 1
@@ -1053,7 +1055,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2112226478}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.99, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

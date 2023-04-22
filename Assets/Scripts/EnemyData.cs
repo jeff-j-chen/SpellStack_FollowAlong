@@ -5,7 +5,7 @@ using System.Collections;
 public enum AttackPattern {
     BasicAttackPattern,
     FastAttackPattern,
-}
+} 
 
 public enum MovementPattern {
     ChasePlayer,
@@ -28,5 +28,4 @@ public class EnemyData {
 
     public AttackPattern attackPattern;
     public MovementPattern movementPattern;
-    
 }
